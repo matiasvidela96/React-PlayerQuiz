@@ -6,7 +6,7 @@ function Hero(){
   return(<div className="row">
     <div className="jumbotron col-10 offset-1">
       <h1>Player Quiz</h1>
-      <p>Select the championship title of the player shown</p>
+      <p>Select the championship title of the player in the image</p>
     </div>
   </div>);
 }
