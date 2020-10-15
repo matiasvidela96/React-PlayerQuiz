@@ -2,6 +2,7 @@ import React from 'react';
 import propTypes from 'prop-types'
 import './App.css';
 import './bootstrap.min.css';
+import { Link } from 'react-router-dom';
 
 function Hero(){
   return(<div className="row">
@@ -69,6 +70,7 @@ function PlayerQuiz({turnData,highlight,onAswerSelected}) {
       <Hero/>
       <Turn {...turnData} highlight={highlight} onAswerSelected={onAswerSelected} />
       <Continue/>
+      <p><Link to="/add">Add a player</Link></p>
       <Footer/>
     </div>
   );

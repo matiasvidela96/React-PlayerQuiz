@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import {BrowserRouter, Route} from 'react-router-dom';
 import './index.css';
 import PlayerQuiz from './PlayerQuiz';
 import * as serviceWorker from './serviceWorker';
@@ -79,16 +80,31 @@ const state = {
   highlight: ''
 };
 
-function onAswerSelected(answer){
+function onAnswerSelected(answer){
   const isCorrect = state.turnData.player.titles.some((title) => title===answer);
   state.highlight = isCorrect ? 'correct' : 'wrong';
   render();
 }
+
+function AddPlayerForm(match){
+  return<div>
+    <h1>Add Player</h1>
+    <p>{JSON.stringify(match)}</p>
+  </div>
+}
+
+function App(){
+  return <PlayerQuiz {...state} onAnswerSelected={onAnswerSelected}/>;     
+}
+
 function render(){
   ReactDOM.render(
-    <React.StrictMode>
-      <PlayerQuiz {...state} onAswerSelected={onAswerSelected}/>
-    </React.StrictMode>,
+    <BrowserRouter>
+      <React.Fragment>  
+        <Route exact path="/" component={App}/>
+        <Route path="/add" component={AddPlayerForm}/>
+      </React.Fragment>
+    </BrowserRouter>,
     document.getElementById('root')
   );
 }
