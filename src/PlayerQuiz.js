@@ -1,4 +1,5 @@
 import React from 'react';
+import propTypes from 'prop-types'
 import './App.css';
 import './bootstrap.min.css';
 
@@ -11,22 +12,41 @@ function Hero(){
   </div>);
 }
 
-function Title({titlename}){
-  return(<div className="answer">
+function Title({titlename,onClick}){
+  return(<div className="answer" onClick={() => {onClick(titlename);}}>
     <h4>{titlename}</h4>
   </div>
   );
 }
 
-function Turn({player,titles}){
-  return(<div className="row turn" style={{backgroundColor:"white"}}>
+function Turn({player,titles,highlight,onAswerSelected}){
+  function highlightToBgColor(highlight){
+    const mapping = {
+      'none': '',
+      'correct': 'green',
+      'wrong': 'red'
+    };
+    return mapping[highlight];
+  }
+  return(<div className="row turn" >
     <div className="col-4 offset-1">
       <img src={player.imageUrl} className="playerimage" alt="Player"></img>
     </div>
-    <div className="col-6">
-      {titles.map((titlename) => <Title titlename={titlename} key={titlename}/>)}
+    <div className="col-6" style={{backgroundColor: highlightToBgColor(highlight)}}>
+      {titles.map((titlename) => <Title titlename={titlename} key={titlename} onClick={onAswerSelected}/>)}
     </div>
   </div>);
+}
+Turn.propTypes = {
+  author: propTypes.shape({
+    name: propTypes.string.isRequired,
+    imageUrl: propTypes.string.isRequired,
+    imageSource: propTypes.string.isRequired,
+    titles: propTypes.arrayOf(propTypes.string).isRequired
+  }),
+  titles: propTypes.arrayOf(propTypes.string).isRequired,
+  onAswerSelected: propTypes.func.isRequired,
+  highlight: propTypes.string.isRequired
 }
 
 function Continue(){
@@ -43,11 +63,11 @@ function Footer(){
   </div>)
 }
 
-function PlayerQuiz({turnData}) {  
+function PlayerQuiz({turnData,highlight,onAswerSelected}) {  
   return (
     <div className="container-fluid">
       <Hero/>
-      <Turn {...turnData}/>
+      <Turn {...turnData} highlight={highlight} onAswerSelected={onAswerSelected} />
       <Continue/>
       <Footer/>
     </div>

@@ -60,30 +60,40 @@ const players = [
 ];
 
 function getTurnData(players){
-  const allTitles = players.reduce(function(p,c,i){
+  const allTitles = players.reduce(function(p,c,i){ //uno todos los títulos de lo jugadores
     return p.concat(c.titles);
   },[]);
-  const fourRandomTitles = shuffle(allTitles).slice(0,4);
-  const answer = sample(fourRandomTitles);
+  const fourRandomTitles = shuffle(allTitles).slice(0,4); //mezclo y obtengo 4 titulos
+  const answer = sample(fourRandomTitles);//selecciono uno de los 4 titulos
 
   return {
-    titles: fourRandomTitles,
-    player: players.find((player)=> 
+    titles: fourRandomTitles,  //devuelvo los 4 titulos
+    player: players.find((player)=> //devuelvo un jugador que tenga algún titulo = al seleccionado en aswer
             player.titles.some((title) => 
             title===answer))
   }
 }
 
 const state = {
-  turnData: getTurnData(players)    
+  turnData: getTurnData(players),
+  highlight: ''
 };
 
-ReactDOM.render(
-  <React.StrictMode>
-    <PlayerQuiz {...state}/>
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+function onAswerSelected(answer){
+  const isCorrect = state.turnData.player.titles.some((title) => title===answer);
+  state.highlight = isCorrect ? 'correct' : 'wrong';
+  render();
+}
+function render(){
+  ReactDOM.render(
+    <React.StrictMode>
+      <PlayerQuiz {...state} onAswerSelected={onAswerSelected}/>
+    </React.StrictMode>,
+    document.getElementById('root')
+  );
+}
+render();
+
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
