@@ -80,7 +80,7 @@ const state = {
   highlight: ''
 };
 
-function onAnswerSelected(answer){
+function onAswerSelected(answer){
   const isCorrect = state.turnData.player.titles.some((title) => title===answer);
   state.highlight = isCorrect ? 'correct' : 'wrong';
   render();
@@ -94,7 +94,7 @@ function AddPlayerForm(match){
 }
 
 function App(){
-  return <PlayerQuiz {...state} onAnswerSelected={onAnswerSelected}/>;     
+  return <PlayerQuiz {...state} onAswerSelected={onAswerSelected}/>;     
 }
 
 function render(){
