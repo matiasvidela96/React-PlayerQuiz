@@ -1,10 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {BrowserRouter, Route} from 'react-router-dom';
+import {BrowserRouter, Route, withRouter} from 'react-router-dom';
 import './index.css';
 import PlayerQuiz from './PlayerQuiz';
 import * as serviceWorker from './serviceWorker';
 import {shuffle,sample} from 'underscore';
+import AddPlayerForm from './AddPlayerFrom';
 
 const players = [
   {
@@ -75,10 +76,14 @@ function getTurnData(players){
   }
 }
 
-const state = {
-  turnData: getTurnData(players),
-  highlight: ''
-};
+let state = resetState();
+
+function resetState() {
+  return {
+    turnData: getTurnData(players),
+    highlight: ''
+  };
+}
 
 function onAswerSelected(answer){
   const isCorrect = state.turnData.player.titles.some((title) => title===answer);
@@ -86,23 +91,28 @@ function onAswerSelected(answer){
   render();
 }
 
-function AddPlayerForm(match){
-  return<div>
-    <h1>Add Player</h1>
-    <p>{JSON.stringify(match)}</p>
-  </div>
+function App(){
+  return <PlayerQuiz {...state} 
+  onAswerSelected={onAswerSelected}
+  onContinue={() => {
+    state = resetState();
+    render();
+  }}/>;     
 }
 
-function App(){
-  return <PlayerQuiz {...state} onAswerSelected={onAswerSelected}/>;     
-}
+const PlayerWrapper = withRouter(({history}) =>
+   <AddPlayerForm onAddPlayer={(player) => {
+    players.push(player);
+    history.push('/');
+  }}/>
+);
 
 function render(){
   ReactDOM.render(
     <BrowserRouter>
       <React.Fragment>  
         <Route exact path="/" component={App}/>
-        <Route path="/add" component={AddPlayerForm}/>
+        <Route path="/add" component={PlayerWrapper}/>
       </React.Fragment>
     </BrowserRouter>,
     document.getElementById('root')
