@@ -1,4 +1,6 @@
 import React from 'react';
+import {connect} from 'react-redux';
+import {withRouter} from 'react-router-dom';
 import "./AddPlayerForm.css";
 
 class PlayerForm extends React.Component{
@@ -59,4 +61,13 @@ function AddPlayerForm({match,onAddPlayer}){
     </div>
   }
 
-  export default AddPlayerForm;
+  function mapDispatchToProps(dispatch, props) {
+    return {
+        onAddPlayer: (player) => {
+            dispatch({ type: 'ADD_PLAYER', player });
+            props.history.push('/');
+        }
+    };
+}
+
+  export default withRouter(connect(() => {}, mapDispatchToProps)(AddPlayerForm));

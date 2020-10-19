@@ -3,6 +3,7 @@ import propTypes from 'prop-types'
 import './App.css';
 import './bootstrap.min.css';
 import { Link } from 'react-router-dom';
+import {connect} from 'react-redux';
 
 function Hero(){
   return(<div className="row">
@@ -72,7 +73,26 @@ function Footer(){
   </div>)
 }
 
-function PlayerQuiz({turnData,highlight,onAswerSelected,onContinue}) {  
+function mapStateToProps(state){
+  return{
+    turnData: state.turnData,
+    highlight: state.highlight
+  };
+}
+
+function mapDispatchToProps(dispatch){
+  return{
+      onAswerSelected: (answer)=> {
+        dispatch({ type: 'ANSWER_SELECTED', answer});
+      },
+      onContinue: ()=> {
+        dispatch({type: 'CONTINUE'});
+      }
+  };
+}
+
+const  PlayerQuiz = connect(mapStateToProps, mapDispatchToProps) 
+(function ({turnData,highlight,onAswerSelected,onContinue}) {  
   return (
     <div className="container-fluid">
       <Hero/>
@@ -81,7 +101,6 @@ function PlayerQuiz({turnData,highlight,onAswerSelected,onContinue}) {
       <p><Link to="/add">Add a player</Link></p>
       <Footer/>
     </div>
-  );
-  
-}
+  );  
+});
 export default PlayerQuiz;

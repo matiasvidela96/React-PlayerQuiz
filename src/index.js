@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {BrowserRouter, Route, withRouter} from 'react-router-dom';
+import * as Redux from 'redux';
+import * as ReactRedux from 'react-redux';
 import './index.css';
 import PlayerQuiz from './PlayerQuiz';
 import * as serviceWorker from './serviceWorker';
@@ -76,50 +78,42 @@ function getTurnData(players){
   }
 }
 
-let state = resetState();
-
-function resetState() {
-  return {
-    turnData: getTurnData(players),
-    highlight: ''
-  };
+function reducer(state = {players, turnData: getTurnData(players), highlight:''}, action)
+{
+  switch (action.type) {
+    case 'ANSWER_SELECTED':
+      const isCorrect = state.turnData.player.titles.some((title) => title === action.answer);
+      return Object.assign(
+        {}, 
+        state, { 
+          highlight: isCorrect ? 'correct' : 'wrong'
+        });
+    case 'CONTINUE': 
+        return Object.assign({}, state, { 
+          highlight: '',
+          turnData: getTurnData(state.players)
+        });
+    case 'ADD_AUTHOR':
+        return Object.assign({}, state, {
+          players: state.players.concat([action.player])
+        });
+    default: return state;
+  } 
 }
 
-function onAswerSelected(answer){
-  const isCorrect = state.turnData.player.titles.some((title) => title===answer);
-  state.highlight = isCorrect ? 'correct' : 'wrong';
-  render();
-}
+let store = Redux.createStore(reducer);
 
-function App(){
-  return <PlayerQuiz {...state} 
-  onAswerSelected={onAswerSelected}
-  onContinue={() => {
-    state = resetState();
-    render();
-  }}/>;     
-}
-
-const PlayerWrapper = withRouter(({history}) =>
-   <AddPlayerForm onAddPlayer={(player) => {
-    players.push(player);
-    history.push('/');
-  }}/>
-);
-
-function render(){
   ReactDOM.render(
     <BrowserRouter>
+    <ReactRedux.Provider store={store}>
       <React.Fragment>  
-        <Route exact path="/" component={App}/>
-        <Route path="/add" component={PlayerWrapper}/>
+        <Route exact path="/" component={PlayerQuiz}/>
+        <Route path="/add" component={AddPlayerForm}/>
       </React.Fragment>
+      </ReactRedux.Provider>
     </BrowserRouter>,
     document.getElementById('root')
   );
-}
-render();
-
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
